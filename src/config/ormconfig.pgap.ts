@@ -7,6 +7,9 @@ const config: DataSourceOptions = {
   username: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
+  ssl: {
+    rejectUnauthorized: false,
+  },
   connectTimeoutMS: 15 * 1000,
   maxQueryExecutionTime: 60 * 1000,
   entities: [

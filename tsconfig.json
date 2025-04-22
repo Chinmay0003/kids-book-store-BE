@@ -1,8 +1,13 @@
 {
-    "compilerOptions": {
-      "baseUrl": ".",
-      "paths": {
-        "~src/*": ["src/*"]
-      }
+  "compilerOptions": {
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "target": "ES2020",
+    "module": "CommonJS",
+    "baseUrl": ".",
+    "paths": {
+      "~src/*": ["src/*"]
     }
+  }
 }
