@@ -13,10 +13,7 @@ const config: DataSourceOptions = {
   },
   connectTimeoutMS: 15 * 1000,
   maxQueryExecutionTime: 60 * 1000,
-  entities: [
-    Book,
-    BookMedia,
-  ],
+  entities: [Book, BookMedia],
   migrations: ["dist/src/svc/migrations/*.{ts,js}"],
   migrationsTableName: "migrations_typeorm",
   migrationsRun: false,

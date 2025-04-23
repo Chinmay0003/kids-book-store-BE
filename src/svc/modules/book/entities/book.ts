@@ -10,19 +10,19 @@ export class Book extends Metadata {
   name!: string;
 
   @Column({ type: "enum", enum: IBookEnum })
-	@Index()
+  @Index()
   category!: IBookEnum;
 
-	@Column({ type: "jsonb", nullable: true })
-	metadata!: IBookMetadata;
+  @Column({ type: "jsonb", nullable: true })
+  metadata!: IBookMetadata;
 
   @Index()
   @Column({ type: "bool", default: false })
   isSold!: boolean;
 
-	@Column({type: "integer"})
-	price!: number;
+  @Column({ type: "integer" })
+  price!: number;
 
-	@OneToMany(() => BookMedia, (e) => e.book)
+  @OneToMany(() => BookMedia, (e) => e.book)
   bookMedia!: BookMedia[];
 }

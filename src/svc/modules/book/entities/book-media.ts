@@ -6,7 +6,6 @@ import { Metadata } from "~src/svc/modules/common/entities";
 
 @Entity({ name: "book-media" })
 export class BookMedia extends Metadata {
-
   @Column({ type: "jsonb", nullable: true })
   metadata!: IBookMediaMetadata;
 
