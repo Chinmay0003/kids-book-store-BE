@@ -1,4 +1,5 @@
 import * as process from "node:process";
+import dataSource from "~src/config/ormconfig.pgap";
 import { Config } from "./types";
 
 export const conf: Config = {
@@ -10,5 +11,6 @@ export const conf: Config = {
     SECRET_ACCESS_KEY: process.env.SECRET_ACCESS_KEY,
     ACCESS_KEY_ID: process.env.ACCESS_KEY_ID,
     REGION: process.env.REGION,
-    PORT: process.env.PORT
+    PORT: process.env.PORT,
+    DEFAULT_DATA_SOURCE: dataSource,
 };

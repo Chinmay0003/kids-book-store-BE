@@ -1,3 +1,5 @@
+import { DataSource } from "typeorm";
+
 export interface Config {
     DB_NAME: string;
     DB_PASSWORD: string;
@@ -8,4 +10,5 @@ export interface Config {
     SECRET_ACCESS_KEY: string;
     ACCESS_KEY_ID: string;
     PORT: string;
+    DEFAULT_DATA_SOURCE: DataSource,
 }

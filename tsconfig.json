@@ -3,11 +3,16 @@
     "esModuleInterop": true,
     "moduleResolution": "node",
     "resolveJsonModule": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "rootDir": "./",
+    "baseUrl": "./",
+    "outDir": "./dist",
+    "strict": true,
     "target": "ES2020",
     "module": "CommonJS",
-    "baseUrl": ".",
     "paths": {
       "~src/*": ["src/*"]
     }
-  }
+  },
 }

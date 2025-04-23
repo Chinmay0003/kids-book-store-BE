@@ -1,4 +1,5 @@
 // eslint-disable-next-line import/first
+import "reflect-metadata";
 import "dotenv/config"; // this loads .env into process.env
 import { conf } from "~src/config/settings";
 // eslint-disable-next-line import/first
