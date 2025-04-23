@@ -40,7 +40,7 @@ export const postNewBookMediaToS3 = async (
 
       return {
         metadata: {
-					s3_key: file.key,
+          s3_key: file.key,
           s3_url: file.location,
           mime_type: file.mimetype,
         },
