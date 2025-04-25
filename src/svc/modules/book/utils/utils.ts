@@ -6,7 +6,11 @@ import { DeepPartial } from "typeorm";
 
 export const fetchAllBooksFromDb = async () => {
   const bookRepository = conf.DEFAULT_DATA_SOURCE.getRepository(Book);
-  const books = await bookRepository.find();
+  const books = await bookRepository.find({
+    relations: {
+      bookMedia: true,
+    }
+  });
   return books;
 }
 
