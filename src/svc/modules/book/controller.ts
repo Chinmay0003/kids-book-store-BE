@@ -9,9 +9,21 @@ import {
   PostNewBookRequest,
 } from "~src/svc/modules/book/types";
 import {
+  fetchAllBooksFromDb,
   postNewBookDataToDB,
   postNewBookMediaToS3,
 } from "~src/svc/modules/book/utils/utils";
+
+export const getAllBooks = async (
+  req: Request,
+  res: Response,
+  _next: NextFunction,
+) => {
+  const bookData = await fetchAllBooksFromDb();
+  res.status(200).json({
+    bookData,
+  });
+};
 
 export const postNewBookData = async (
   req: Request,

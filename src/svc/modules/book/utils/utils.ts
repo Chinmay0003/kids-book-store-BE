@@ -4,6 +4,12 @@ import { Book, BookMedia } from "~src/svc/modules/book/entities";
 import { IBookEnum, MediaTypeEnum } from "~src/svc/modules/book/enum";
 import { DeepPartial } from "typeorm";
 
+export const fetchAllBooksFromDb = async () => {
+  const bookRepository = conf.DEFAULT_DATA_SOURCE.getRepository(Book);
+  const books = await bookRepository.find();
+  return books;
+}
+
 export const postNewBookDataToDB = async (bookData: {
   name?: string;
   category?: string;
@@ -26,7 +32,7 @@ export const postNewBookMediaToS3 = async (
 ) => {
   const bookMediaRepo = conf.DEFAULT_DATA_SOURCE.getRepository(BookMedia);
   const files = req.files as Express.MulterS3.File[];
-
+  console.log("Files received:", files);
   const bookMediaToSave = files
     .map((file) => {
       let mediaType: MediaTypeEnum;
