@@ -1,6 +1,6 @@
 import { Column, Entity, Index, OneToMany } from "typeorm";
 import { BookMedia } from "~src/svc/modules/book/entities/book-media";
-import { IBookEnum } from "~src/svc/modules/book/enum";
+import { IBookEnum, IBookQualityEnum, IBookTypeEnum } from "~src/svc/modules/book/enum";
 import { IBookMetadata } from "~src/svc/modules/book/types";
 import { Metadata } from "~src/svc/modules/common/entities";
 
@@ -22,6 +22,12 @@ export class Book extends Metadata {
 
   @Column({ type: "integer" })
   price!: number;
+
+  @Column({ type: "enum", enum: IBookQualityEnum, nullable: true })
+  quality!: IBookQualityEnum;
+
+  @Column({ type: "enum", enum: IBookTypeEnum, nullable: true })
+  type!: IBookTypeEnum;
 
   @OneToMany(() => BookMedia, (e) => e.book)
   bookMedia!: BookMedia[];

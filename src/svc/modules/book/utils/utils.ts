@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { conf } from "~src/config/settings";
 import { Book, BookMedia } from "~src/svc/modules/book/entities";
-import { IBookEnum, MediaTypeEnum } from "~src/svc/modules/book/enum";
+import { IBookEnum, IBookQualityEnum, IBookTypeEnum, MediaTypeEnum } from "~src/svc/modules/book/enum";
 import { DeepPartial } from "typeorm";
 
 export const fetchAllBooksFromDb = async () => {
@@ -18,12 +18,16 @@ export const postNewBookDataToDB = async (bookData: {
   name?: string;
   category?: string;
   price?: number;
+  quality?: string;
+  bookType?: string;
 }) => {
   const bookRepository = conf.DEFAULT_DATA_SOURCE.getRepository(Book);
   const savedBook = await bookRepository.save({
     name: bookData.name,
     category: bookData.category as IBookEnum,
     price: bookData.price,
+    quality: bookData.quality as IBookQualityEnum,
+    type: bookData.bookType as IBookTypeEnum,
   });
   return savedBook.id;
 };
