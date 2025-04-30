@@ -3,15 +3,18 @@ import { uploadWithBookId } from "~src/svc/modules/book/muller";
 import {
   PostNewBookMediaSchema,
   PostNewBookSchema,
+  UpdateBookDataSchema,
 } from "~src/svc/modules/book/schemas";
 import {
   PostNewBookMediaRequest,
   PostNewBookRequest,
+  UpdateBookDataRequest,
 } from "~src/svc/modules/book/types";
 import {
   fetchAllBooksFromDb,
   postNewBookDataToDB,
   postNewBookMediaToS3,
+  updateBookDataInDb,
 } from "~src/svc/modules/book/utils/utils";
 
 export const getAllBooks = async (
@@ -69,4 +72,23 @@ export const postNewBookMedia = async (
 
     await postNewBookMediaToS3(req, res, next, parseInt(bookId));
   });
+};
+
+export const updateBookData = async (
+  req: Request,
+  res: Response,
+  _next: NextFunction,
+) => {
+  let data: UpdateBookDataRequest;
+  try {
+    data = UpdateBookDataSchema.parse(req.body);
+  } catch (e: unknown) {
+    res.status(400).json({
+      message: "Data validation failed",
+      errors: (e as Error).message,
+    });
+    return;
+  }
+  await updateBookDataInDb(data);
+  res.status(200).json({status: "OK"});
 };

@@ -11,3 +11,13 @@ export const PostNewBookSchema = z.object({
 export const PostNewBookMediaSchema = z.object({
   bookId: z.string(),
 });
+
+export const UpdateBookDataSchema = z.object({
+  bookId: z.number(),
+  name: z.string().optional(),
+  category: z.string().optional(),
+  price: z.number().optional(),
+  quality: z.string().optional(),
+  bookType: z.string().optional(),
+  mediaToDelete: z.array(z.number()).optional(),
+});

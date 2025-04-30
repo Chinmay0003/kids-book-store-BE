@@ -68,3 +68,35 @@ export const postNewBookMediaToS3 = async (
 
   res.status(200).json({ status: "Media uploaded", files: bookMediaToSave });
 };
+
+export const updateBookDataInDb = async (bookData: {
+  bookId: number,
+  name?: string,
+  category?: string,
+  price?: number,
+  quality?: string,
+  bookType?: string,
+  mediaToDelete?: number[],
+}) => {
+  const bookRepository = conf.DEFAULT_DATA_SOURCE.getRepository(Book);
+  const bookMediaRepository = conf.DEFAULT_DATA_SOURCE.getRepository(BookMedia);
+  const existingBook = await bookRepository.findOne({
+    where: {
+      id: bookData.bookId,
+    },
+  })
+  if (existingBook === null) {
+    return;
+  }
+  await bookRepository.save({
+    ...existingBook,
+    ...(bookData.name !== undefined && {name: bookData.name}),
+    ...(bookData.category !== undefined && {category: bookData.category as IBookEnum}),
+    ...(bookData.price !== undefined && {price: bookData.price}),
+    ...(bookData.quality !== undefined && {quality: bookData.quality as IBookQualityEnum}),
+    ...(bookData.bookType !== undefined && {type: bookData.bookType as IBookTypeEnum}),
+  });
+  if (bookData.mediaToDelete !== undefined && bookData.mediaToDelete.length > 0) {
+    await bookMediaRepository.delete(bookData.mediaToDelete);
+  }
+};
