@@ -11,4 +11,6 @@ export interface Config {
   ACCESS_KEY_ID: string;
   PORT: string;
   DEFAULT_DATA_SOURCE: DataSource;
+  RAZORPAY_KEY_ID: string;
+  RAZORPAY_KEY_SECRET: string;
 }

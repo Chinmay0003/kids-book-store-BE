@@ -10,6 +10,8 @@ declare global {
       SECRET_ACCESS_KEY: string;
       ACCESS_KEY_ID: string;
       PORT: string;
+      RAZORPAY_KEY_ID: string;
+      RAZORPAY_KEY_SECRET: string;
     }
   }
 }
