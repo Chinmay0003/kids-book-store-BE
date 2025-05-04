@@ -3,6 +3,7 @@ import morgan from "morgan";
 import cors from "cors";
 
 import { initializeDataSources } from "~src/config/data-source-initializer";
+import "~src/svc/modules/auth/passport";
 import { router } from "~src/svc/router";
 
 export const createServer = async () => {
