@@ -1,1 +1,1 @@
-export { cartRouter } from "~src/svc/modules/cart/entities/router";
+export { cartRouter } from "~src/svc/modules/cart/router";

@@ -1,6 +1,6 @@
 import express, { RequestHandler } from "express";
 import { authenticateJWT } from "~src/svc/modules/auth/middleware";
-import {addBookToCart, getActiveCart, updateCartWithBooks}  from "~src/svc/modules/cart/entities/controller";
+import { addBookToCart, getActiveCart, updateCartWithBooks } from "~src/svc/modules/cart/controller";
 
 export const cartRouter = express.Router();
 
