@@ -17,11 +17,7 @@ import {
   updateBookDataInDb,
 } from "~src/svc/modules/book/utils/utils";
 
-export const getAllBooks = async (
-  req: Request,
-  res: Response,
-  _next: NextFunction,
-) => {
+export const getAllBooks = async (req: Request, res: Response, _next: NextFunction) => {
   const bookData = await fetchAllBooksFromDb();
   res.status(200).json({
     bookData,
@@ -90,5 +86,5 @@ export const updateBookData = async (
     return;
   }
   await updateBookDataInDb(data);
-  res.status(200).json({status: "OK"});
+  res.status(200).json({ status: "OK" });
 };

@@ -1,7 +1,12 @@
 import { NextFunction, Request, Response } from "express";
 import { conf } from "~src/config/settings";
 import { Book, BookMedia } from "~src/svc/modules/book/entities";
-import { IBookEnum, IBookQualityEnum, IBookTypeEnum, MediaTypeEnum } from "~src/svc/modules/book/enum";
+import {
+  IBookEnum,
+  IBookQualityEnum,
+  IBookTypeEnum,
+  MediaTypeEnum,
+} from "~src/svc/modules/book/enum";
 import { DeepPartial } from "typeorm";
 
 export const fetchAllBooksFromDb = async () => {
@@ -9,10 +14,10 @@ export const fetchAllBooksFromDb = async () => {
   const books = await bookRepository.find({
     relations: {
       bookMedia: true,
-    }
+    },
   });
   return books;
-}
+};
 
 export const postNewBookDataToDB = async (bookData: {
   name?: string;
@@ -70,13 +75,13 @@ export const postNewBookMediaToS3 = async (
 };
 
 export const updateBookDataInDb = async (bookData: {
-  bookId: number,
-  name?: string,
-  category?: string,
-  price?: number,
-  quality?: string,
-  bookType?: string,
-  mediaToDelete?: number[],
+  bookId: number;
+  name?: string;
+  category?: string;
+  price?: number;
+  quality?: string;
+  bookType?: string;
+  mediaToDelete?: number[];
 }) => {
   const bookRepository = conf.DEFAULT_DATA_SOURCE.getRepository(Book);
   const bookMediaRepository = conf.DEFAULT_DATA_SOURCE.getRepository(BookMedia);
@@ -84,17 +89,23 @@ export const updateBookDataInDb = async (bookData: {
     where: {
       id: bookData.bookId,
     },
-  })
+  });
   if (existingBook === null) {
     return;
   }
   await bookRepository.save({
     ...existingBook,
-    ...(bookData.name !== undefined && {name: bookData.name}),
-    ...(bookData.category !== undefined && {category: bookData.category as IBookEnum}),
-    ...(bookData.price !== undefined && {price: bookData.price}),
-    ...(bookData.quality !== undefined && {quality: bookData.quality as IBookQualityEnum}),
-    ...(bookData.bookType !== undefined && {type: bookData.bookType as IBookTypeEnum}),
+    ...(bookData.name !== undefined && { name: bookData.name }),
+    ...(bookData.category !== undefined && {
+      category: bookData.category as IBookEnum,
+    }),
+    ...(bookData.price !== undefined && { price: bookData.price }),
+    ...(bookData.quality !== undefined && {
+      quality: bookData.quality as IBookQualityEnum,
+    }),
+    ...(bookData.bookType !== undefined && {
+      type: bookData.bookType as IBookTypeEnum,
+    }),
   });
   if (bookData.mediaToDelete !== undefined && bookData.mediaToDelete.length > 0) {
     await bookMediaRepository.delete(bookData.mediaToDelete);

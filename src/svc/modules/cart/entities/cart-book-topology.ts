@@ -7,15 +7,15 @@ import { Metadata } from "~src/svc/modules/common/entities";
 
 @Entity({ name: "cart_book_topology" })
 export class CartBookTopology extends Metadata {
-    @Index()
-    @ManyToOne("Cart", (e: Cart) => e.cartBookTopology, {
-        onDelete: "CASCADE",
-    })
-    cart!: Cart;
+  @Index()
+  @ManyToOne("Cart", (e: Cart) => e.cartBookTopology, {
+    onDelete: "CASCADE",
+  })
+  cart!: Cart;
 
-    @Index()
-    @ManyToOne("Book", (e: Book) => e.cartBookTopology, {
-        onDelete: "CASCADE",
-    })
-    book!: Book;
-};
+  @Index()
+  @ManyToOne("Book", (e: Book) => e.cartBookTopology, {
+    onDelete: "CASCADE",
+  })
+  book!: Book;
+}

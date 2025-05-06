@@ -2,6 +2,7 @@ import { DataSource, DataSourceOptions } from "typeorm";
 import { AppUser } from "~src/svc/modules/auth/entities/user";
 import { Book, BookMedia } from "~src/svc/modules/book/entities";
 import { Cart, CartBookTopology } from "~src/svc/modules/cart/entities";
+import { Address } from "~src/svc/modules/checkout/entities";
 
 const config: DataSourceOptions = {
   type: "postgres",
@@ -15,7 +16,7 @@ const config: DataSourceOptions = {
   },
   connectTimeoutMS: 15 * 1000,
   maxQueryExecutionTime: 60 * 1000,
-  entities: [Book, BookMedia, AppUser, Cart, CartBookTopology],
+  entities: [Book, BookMedia, AppUser, Cart, CartBookTopology, Address],
   migrations: ["dist/src/svc/migrations/*.{ts,js}"],
   migrationsTableName: "migrations_typeorm",
   migrationsRun: false,

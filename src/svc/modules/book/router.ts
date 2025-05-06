@@ -1,5 +1,10 @@
 import express from "express";
-import { getAllBooks, postNewBookData, postNewBookMedia, updateBookData } from "~src/svc/modules/book/controller";
+import {
+  getAllBooks,
+  postNewBookData,
+  postNewBookMedia,
+  updateBookData,
+} from "~src/svc/modules/book/controller";
 
 export const bookRouter = express.Router();
 
