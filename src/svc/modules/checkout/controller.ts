@@ -34,9 +34,7 @@ export const addAddress = async (
     return;
   }
   const userId = req.user?.id ?? "-1";
-  const { cartId } = data;
-  const addressId = await addAddRessToDb(parseInt(userId), data);
-  await assignAddressToCart(cartId, addressId);
+  await addAddRessToDb(parseInt(userId), data);
   const response = await fetchAllAddressesForUser(parseInt(userId));
   res.status(200).json(response);
 };

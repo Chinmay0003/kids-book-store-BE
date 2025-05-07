@@ -4,6 +4,7 @@ import { bookRouter } from "~src/svc/modules/book";
 import { paymentRouter } from "~src/svc/modules/payment";
 import { authRouter } from "~src/svc/modules/auth/router";
 import { cartRouter } from "~src/svc/modules/cart";
+import { checkoutRouter } from "~src/svc/modules/checkout";
 
 export const router = express.Router();
 
@@ -12,3 +13,4 @@ router.use("/book", bookRouter);
 router.use("/payment", paymentRouter);
 router.use("/auth", authRouter);
 router.use("/cart", cartRouter);
+router.use("/checkout", checkoutRouter);

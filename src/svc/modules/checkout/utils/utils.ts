@@ -29,7 +29,7 @@ export const addAddRessToDb = async (
 ) => {
   const addressRepo = conf.DEFAULT_DATA_SOURCE.getRepository(Address);
   const newAddress = await addressRepo.save({
-    user: {
+    appUser: {
       id: userId,
     },
     firstName: addressData.firstName,

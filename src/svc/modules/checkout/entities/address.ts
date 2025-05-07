@@ -34,8 +34,9 @@ export class Address extends Metadata {
   phoneNumber!: string;
 
   @Index()
-  @ManyToOne("AppUser", (e: AppUser) => e.addresses, {
+  @ManyToOne(() => AppUser, (e: AppUser) => e.addresses, {
     onDelete: "CASCADE",
+    nullable: false,
   })
   appUser!: AppUser;
 
