@@ -10,7 +10,7 @@ import { Metadata } from "~src/svc/modules/common/entities";
 @Entity({ name: "address" })
 export class Address extends Metadata {
   @Column({ type: "varchar", length: 255 })
-  firatName!: string;
+  firstName!: string;
 
   @Column({ type: "varchar", length: 255 })
   lastName!: string;
