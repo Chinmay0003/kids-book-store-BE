@@ -1,9 +1,10 @@
 import { z } from "zod";
 
 export const PostPaymentInitialisationSchema = z.object({
-  bookId: z.string(),
+  bookIds: z.array(z.number()),
+  addressId: z.number(),
 });
 
 export const PostPaymentSuccessfulSchema = z.object({
-  bookId: z.string(),
+  bookIds: z.array(z.number()),
 });

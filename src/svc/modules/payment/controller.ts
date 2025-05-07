@@ -20,7 +20,7 @@ export const initiatePayment = async (
 ) => {
   let data: PostPaymentInitialisationRequest;
   try {
-    data = PostPaymentInitialisationSchema.parse(req.query);
+    data = PostPaymentInitialisationSchema.parse(req.body);
   } catch (e: unknown) {
     res.status(400).json({
       message: "Data validation failed",
@@ -28,8 +28,8 @@ export const initiatePayment = async (
     });
     return;
   }
-  const { bookId } = data;
-  const response = await processPaymentInitialisationForBook(parseInt(bookId));
+  const { bookIds, addressId } = data;
+  const response = await processPaymentInitialisationForBook(bookIds, addressId);
   if (response === undefined) {
     res.status(400).json({
       message: "Book not found",
@@ -45,7 +45,7 @@ export const successfulPayment = async (
 ) => {
   let data: PostPaymentSuccessfulRequest;
   try {
-    data = PostPaymentSuccessfulSchema.parse(req.query);
+    data = PostPaymentSuccessfulSchema.parse(req.body);
   } catch (e: unknown) {
     res.status(400).json({
       message: "Data validation failed",
@@ -53,7 +53,7 @@ export const successfulPayment = async (
     });
     return;
   }
-  const { bookId } = data;
-  await markBookAsSold(parseInt(bookId));
+  const { bookIds } = data;
+  await Promise.all(bookIds.map(markBookAsSold));
   res.status(200).json({ status: "OK" });
 };
