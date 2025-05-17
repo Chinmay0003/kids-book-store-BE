@@ -1,11 +1,13 @@
 import { NextFunction, Request, Response } from "express";
 import { uploadWithBookId } from "~src/svc/modules/book/muller";
 import {
+  GetBookDataSchema,
   PostNewBookMediaSchema,
   PostNewBookSchema,
   UpdateBookDataSchema,
 } from "~src/svc/modules/book/schemas";
 import {
+  GetBookDataRequest,
   PostNewBookMediaRequest,
   PostNewBookRequest,
   UpdateBookDataRequest,
@@ -18,7 +20,18 @@ import {
 } from "~src/svc/modules/book/utils/utils";
 
 export const getAllBooks = async (req: Request, res: Response, _next: NextFunction) => {
-  const bookData = await fetchAllBooksFromDb();
+  let data: GetBookDataRequest;
+  try {
+    data = GetBookDataSchema.parse(req.query);
+  } catch (e: unknown) {
+    res.status(400).json({
+      message: "Data validation failed",
+      errors: (e as Error).message,
+    });
+    return;
+  }
+  const{bookId} = data;
+  const bookData = await fetchAllBooksFromDb(bookId);
   res.status(200).json({
     bookData,
   });

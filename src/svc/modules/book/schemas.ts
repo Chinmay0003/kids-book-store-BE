@@ -1,5 +1,9 @@
 import { z } from "zod";
 
+export const GetBookDataSchema = z.object({
+  bookId: z.string().optional(),
+});
+
 export const PostNewBookSchema = z.object({
   name: z.string().optional(),
   category: z.string().optional(),

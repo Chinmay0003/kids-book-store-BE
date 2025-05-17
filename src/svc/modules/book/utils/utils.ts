@@ -9,9 +9,14 @@ import {
 } from "~src/svc/modules/book/enum";
 import { DeepPartial } from "typeorm";
 
-export const fetchAllBooksFromDb = async () => {
+export const fetchAllBooksFromDb = async (bookId: string | undefined) => {
   const bookRepository = conf.DEFAULT_DATA_SOURCE.getRepository(Book);
   const books = await bookRepository.find({
+    ...(bookId && {
+      where: {
+        id: parseInt(bookId),
+      },
+    }),
     relations: {
       bookMedia: true,
     },

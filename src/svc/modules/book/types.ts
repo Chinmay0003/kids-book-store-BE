@@ -1,9 +1,12 @@
 import { z } from "zod";
 import {
+  GetBookDataSchema,
   PostNewBookMediaSchema,
   PostNewBookSchema,
   UpdateBookDataSchema,
 } from "~src/svc/modules/book/schemas";
+
+export type GetBookDataRequest = z.infer<typeof GetBookDataSchema>;
 
 export type PostNewBookRequest = z.infer<typeof PostNewBookSchema>;
 
