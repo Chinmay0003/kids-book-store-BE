@@ -15,6 +15,9 @@ export const fetchAllBooksFromDb = async () => {
     relations: {
       bookMedia: true,
     },
+    order: {
+      updatedAt: "DESC",
+    },
   });
   return books;
 };
