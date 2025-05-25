@@ -24,4 +24,5 @@ export const UpdateBookDataSchema = z.object({
   quality: z.string().optional(),
   bookType: z.string().optional(),
   mediaToDelete: z.array(z.number()).optional(),
+  isSold: z.boolean().optional(),
 });

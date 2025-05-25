@@ -90,6 +90,7 @@ export const updateBookDataInDb = async (bookData: {
   quality?: string;
   bookType?: string;
   mediaToDelete?: number[];
+  isSold?: boolean;
 }) => {
   const bookRepository = conf.DEFAULT_DATA_SOURCE.getRepository(Book);
   const bookMediaRepository = conf.DEFAULT_DATA_SOURCE.getRepository(BookMedia);
@@ -113,6 +114,9 @@ export const updateBookDataInDb = async (bookData: {
     }),
     ...(bookData.bookType !== undefined && {
       type: bookData.bookType as IBookTypeEnum,
+    }),
+    ...(bookData.isSold !== undefined && {
+      isSold: bookData.isSold,
     }),
   });
   if (bookData.mediaToDelete !== undefined && bookData.mediaToDelete.length > 0) {
