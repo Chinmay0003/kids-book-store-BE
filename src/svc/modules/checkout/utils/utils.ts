@@ -52,3 +52,8 @@ export const assignAddressToCart = async (cartId: number, addressId: number) => 
     },
   });
 };
+
+export const deleteAddressForId = async (addressId: number) => {
+  const addressRepo = conf.DEFAULT_DATA_SOURCE.getRepository(Address);
+  await addressRepo.delete(addressId);
+};

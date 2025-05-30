@@ -10,6 +10,7 @@ export const PostNewBookSchema = z.object({
   price: z.number().optional(),
   quality: z.string().optional(),
   bookType: z.string().optional(),
+  contentCategory: z.string().optional(),
 });
 
 export const PostNewBookMediaSchema = z.object({
@@ -23,6 +24,7 @@ export const UpdateBookDataSchema = z.object({
   price: z.number().optional(),
   quality: z.string().optional(),
   bookType: z.string().optional(),
+  contentCategory: z.string().optional(),
   mediaToDelete: z.array(z.number()).optional(),
   isSold: z.boolean().optional(),
 });

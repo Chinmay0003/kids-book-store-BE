@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { conf } from "~src/config/settings";
 import { Book, BookMedia } from "~src/svc/modules/book/entities";
 import {
+  IBookContentCategoryEnum,
   IBookEnum,
   IBookQualityEnum,
   IBookTypeEnum,
@@ -33,6 +34,7 @@ export const postNewBookDataToDB = async (bookData: {
   price?: number;
   quality?: string;
   bookType?: string;
+  contentCategory?: string;
 }) => {
   const bookRepository = conf.DEFAULT_DATA_SOURCE.getRepository(Book);
   const savedBook = await bookRepository.save({
@@ -41,6 +43,7 @@ export const postNewBookDataToDB = async (bookData: {
     price: bookData.price,
     quality: bookData.quality as IBookQualityEnum,
     type: bookData.bookType as IBookTypeEnum,
+    contentCategory: bookData.contentCategory as IBookContentCategoryEnum,
   });
   return savedBook.id;
 };
@@ -89,6 +92,7 @@ export const updateBookDataInDb = async (bookData: {
   price?: number;
   quality?: string;
   bookType?: string;
+  contentCategory?: string;
   mediaToDelete?: number[];
   isSold?: boolean;
 }) => {
@@ -114,6 +118,9 @@ export const updateBookDataInDb = async (bookData: {
     }),
     ...(bookData.bookType !== undefined && {
       type: bookData.bookType as IBookTypeEnum,
+    }),
+    ...(bookData.contentCategory !== undefined && {
+      contentCategory: bookData.contentCategory as IBookContentCategoryEnum,
     }),
     ...(bookData.isSold !== undefined && {
       isSold: bookData.isSold,

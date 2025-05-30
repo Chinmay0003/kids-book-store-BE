@@ -10,3 +10,7 @@ export const PostAdddAddressToDbSchema = z.object({
   pincode: z.number(),
   phoneNumber: z.string(),
 });
+
+export const DeleteAddressSchema = z.object({
+  addressId: z.number(),
+});
