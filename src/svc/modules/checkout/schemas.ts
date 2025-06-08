@@ -14,3 +14,8 @@ export const PostAdddAddressToDbSchema = z.object({
 export const DeleteAddressSchema = z.object({
   addressId: z.number(),
 });
+
+export const GetCartPriceSchema = z.object({
+  cartId: z.number(),
+  coupon: z.string().optional(),
+});

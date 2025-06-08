@@ -1,6 +1,8 @@
 import { conf } from "~src/config/settings";
 import { Cart } from "~src/svc/modules/cart/entities";
+import { FREE_DELIVERY_PRICE_THRESHOLD } from "~src/svc/modules/checkout/constants";
 import { Address } from "~src/svc/modules/checkout/entities";
+import { Coupon } from "~src/svc/modules/checkout/entities/coupon";
 import { IAddressCountryEnum } from "~src/svc/modules/checkout/enums";
 
 export const fetchAllAddressesForUser = async (userId: number) => {
@@ -56,4 +58,81 @@ export const assignAddressToCart = async (cartId: number, addressId: number) => 
 export const deleteAddressForId = async (addressId: number) => {
   const addressRepo = conf.DEFAULT_DATA_SOURCE.getRepository(Address);
   await addressRepo.delete(addressId);
+};
+
+export const fetchCouponForName = async (
+  couponName: string,
+) => {
+  const couponRepository = conf.DEFAULT_DATA_SOURCE.getRepository(Coupon);
+  return await couponRepository.findOne({
+    where: {
+      name: couponName,
+    },
+  });
+};
+
+export const checkCouponValidity = (coupon: Coupon) => {
+  if (!coupon.isActive) {
+    return false;
+  }
+  const currDate = new Date()
+  if (coupon.validityCriteria.days !== undefined && !coupon.validityCriteria.days.includes(currDate.getDay())) {
+    return false;
+  }
+  if (coupon.validityCriteria.date !== undefined && !coupon.validityCriteria.date.includes(currDate.toISOString())) {
+    return false;
+  }
+  return true;
+};
+
+export const fetchCartPriceData = async (
+  checkoutData: {
+    cartId: number;
+    coupon?: string;
+  }
+) => {
+  const cartRepository = conf.DEFAULT_DATA_SOURCE.getRepository(Cart);
+  const currCart = await cartRepository.findOne({
+    where: {
+      id: checkoutData.cartId,
+    },
+    relations: {
+      cartBookTopology: {
+        book: true,
+      },
+    },
+  });
+  if (currCart === null) {
+    return {
+      cartPrice: 0,
+      discountAmount: 0,
+      deliveryCharge: 0,
+      finalPrice: 0,
+    };
+  }
+  let cartPrice = 0;
+  let discountAmount = 0;
+  let deliveryCharge = 100;
+  currCart.cartBookTopology.forEach((cbt) => cartPrice += cbt.book.price);
+  if (checkoutData.coupon !== undefined) {
+    const currCoupon = await fetchCouponForName(checkoutData.coupon);
+    if (currCoupon !== null && checkCouponValidity(currCoupon)) {
+      if (currCoupon.discountAmount.flatAmount !== undefined) {
+        discountAmount = cartPrice > currCoupon.discountAmount.flatAmount ? currCoupon.discountAmount.flatAmount : cartPrice;
+      } else if (currCoupon.discountAmount.percentage !== undefined) {
+        discountAmount = cartPrice * currCoupon.discountAmount.percentage / 100;
+      }
+    }
+  }
+  let finalPrice = cartPrice > discountAmount ? cartPrice - discountAmount : 0;
+  if (finalPrice >= FREE_DELIVERY_PRICE_THRESHOLD) {
+    deliveryCharge = 0;
+  }
+  finalPrice += deliveryCharge;
+  return {
+    cartPrice,
+    discountAmount,
+    deliveryCharge,
+    finalPrice,
+  };
 };

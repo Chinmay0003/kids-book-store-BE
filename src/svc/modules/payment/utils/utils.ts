@@ -2,32 +2,45 @@ import { RazorpayClient } from "~src/clients/razorpay";
 import { conf } from "~src/config/settings";
 import { Book } from "~src/svc/modules/book/entities";
 import { In } from "typeorm";
+import { Cart } from "~src/svc/modules/cart/entities";
+import { fetchCartPriceData } from "~src/svc/modules/checkout/utils/utils";
 
 export const processPaymentInitialisationForBook = async (
-  bookIds: number[],
+  cartId: number,
   address: number,
+  coupon?: string,
 ) => {
-  const bookRepository = conf.DEFAULT_DATA_SOURCE.getRepository(Book);
+  const cartRepository = conf.DEFAULT_DATA_SOURCE.getRepository(Cart);
 
-  const requiredBooks = await bookRepository.findBy({
-    id: In(bookIds),
+  const requiredCart = await cartRepository.findOne({
+    where: {
+      id: cartId,
+    },
+    relations: {
+      cartBookTopology: {
+        book: true,
+      },
+    },
   });
-  if (!requiredBooks.length) {
+  if (!requiredCart?.cartBookTopology.length) {
     return;
   }
 
-  const amount = requiredBooks.reduce((sum, book) => sum + book.price, 0);
+  const priceDetails = await fetchCartPriceData({
+    cartId,
+    coupon,
+  });
 
   const razorpayClient = new RazorpayClient();
-  const currentOrder = await razorpayClient.createOrder(amount);
+  const currentOrder = await razorpayClient.createOrder(priceDetails.finalPrice);
 
   return {
     ...currentOrder,
     shippingAddress: address,
     razorpayKeyId: conf.RAZORPAY_KEY_ID,
-    items: requiredBooks.map((book) => ({
-      id: book.id,
-      price: book.price,
+    items: requiredCart.cartBookTopology.map((cbt) => ({
+      id: cbt.book.id,
+      price: cbt.book.price,
       isSold: true,
     })),
   };

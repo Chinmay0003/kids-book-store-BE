@@ -4,11 +4,12 @@ import { ICartStatusEnum } from "~src/svc/modules/cart/enums";
 
 export const getCurrentActiveCartForUser = async (userId: number) => {
   const cartRepo = conf.DEFAULT_DATA_SOURCE.getRepository(Cart);
-  return await cartRepo.find({
+  let currCart = await cartRepo.findOne({
     where: {
       appUser: {
         id: userId,
       },
+      status: ICartStatusEnum.ACTIVE,
     },
     relations: {
       cartBookTopology: {
@@ -18,6 +19,30 @@ export const getCurrentActiveCartForUser = async (userId: number) => {
       },
     },
   });
+  if (currCart === null) {
+    await cartRepo.save({
+      appUser: {
+        id: userId,
+      },
+      status: ICartStatusEnum.ACTIVE,
+    });
+    currCart = await cartRepo.findOne({
+      where: {
+        appUser: {
+          id: userId,
+        },
+        status: ICartStatusEnum.ACTIVE,
+      },
+      relations: {
+        cartBookTopology: {
+          book: {
+            bookMedia: true,
+          },
+        },
+      },
+    });
+  }
+  return currCart;
 };
 
 export const addBookToCartForUser = async (userId: number, bookId: number) => {

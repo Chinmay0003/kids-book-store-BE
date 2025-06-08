@@ -1,0 +1,1 @@
+export const FREE_DELIVERY_PRICE_THRESHOLD = 599
