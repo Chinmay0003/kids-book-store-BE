@@ -28,8 +28,8 @@ export const initiatePayment = async (
     });
     return;
   }
-  const { bookIds, addressId } = data;
-  const response = await processPaymentInitialisationForBook(bookIds, addressId);
+  const { cartId, addressId, coupon } = data;
+  const response = await processPaymentInitialisationForBook(cartId, addressId, coupon);
   if (response === undefined) {
     res.status(400).json({
       message: "Book not found",
