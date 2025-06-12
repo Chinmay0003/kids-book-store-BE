@@ -1,6 +1,6 @@
 import { NextFunction, Response } from "express";
 import { AuthRequest } from "~src/svc/modules/auth/middleware";
-import { IUser } from "~src/svc/modules/auth/types";
+import { ICartStatusEnum } from "~src/svc/modules/cart/enums";
 import {
   PostAddBookToDbSchema,
   PutBooksToCartSchema,
@@ -41,8 +41,8 @@ export const addBookToCart = async (
     return;
   }
   const userId = req.user?.id ?? "-1";
-  const { bookId } = data;
-  await addBookToCartForUser(parseInt(userId), bookId);
+  const { bookId, cartType } = data;
+  await addBookToCartForUser(parseInt(userId), bookId, cartType as ICartStatusEnum);
   const response = await getCurrentActiveCartForUser(parseInt(userId));
   res.status(200).json(response);
 };
@@ -63,8 +63,8 @@ export const updateCartWithBooks = async (
     return;
   }
   const userId = req.user?.id ?? "-1";
-  const { bookIds } = data;
-  await updateCartWithBooksInDb(parseInt(userId), bookIds);
+  const { bookIds, cartType } = data;
+  await updateCartWithBooksInDb(parseInt(userId), bookIds, cartType as ICartStatusEnum);
   const response = await getCurrentActiveCartForUser(parseInt(userId));
   res.status(200).json(response);
 };

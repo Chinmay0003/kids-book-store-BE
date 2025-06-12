@@ -4,7 +4,6 @@ import { DeleteAddressSchema, GetCartPriceSchema, PostAdddAddressToDbSchema } fr
 import { DeleteAddressRequest, GetCartPriceRequest, PostAdddAddressToDbRequest } from "~src/svc/modules/checkout/types";
 import {
   addAddRessToDb,
-  assignAddressToCart,
   deleteAddressForId,
   fetchAllAddressesForUser,
   fetchCartPriceData,

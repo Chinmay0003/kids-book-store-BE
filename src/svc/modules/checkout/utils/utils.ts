@@ -1,6 +1,6 @@
 import { conf } from "~src/config/settings";
 import { Cart } from "~src/svc/modules/cart/entities";
-import { FREE_DELIVERY_PRICE_THRESHOLD } from "~src/svc/modules/checkout/constants";
+import { BLOCKING_PERCENTAGE, FREE_DELIVERY_PRICE_THRESHOLD } from "~src/svc/modules/checkout/constants";
 import { Address } from "~src/svc/modules/checkout/entities";
 import { Coupon } from "~src/svc/modules/checkout/entities/coupon";
 import { IAddressCountryEnum } from "~src/svc/modules/checkout/enums";
@@ -46,12 +46,23 @@ export const addAddRessToDb = async (
   return newAddress.id;
 };
 
-export const assignAddressToCart = async (cartId: number, addressId: number) => {
+export const assignAddressAndCouponToCart = async (cartId: number, addressId: number, coupon?: string) => {
   const cartRepo = conf.DEFAULT_DATA_SOURCE.getRepository(Cart);
+  const couponRepo = conf.DEFAULT_DATA_SOURCE.getRepository(Coupon);
+  const currCoupon = coupon ? await couponRepo.findOne({
+    where: {
+      name: coupon,
+    },
+  }) : null;
   await cartRepo.update(cartId, {
     address: {
       id: addressId,
     },
+    ...(currCoupon !== null && {
+      coupon: {
+        id: currCoupon.id,
+      }
+    }),
   });
 };
 
@@ -89,6 +100,8 @@ export const fetchCartPriceData = async (
   checkoutData: {
     cartId: number;
     coupon?: string;
+    isInitialBlock?: boolean;
+    isBlockComplete?: boolean;
   }
 ) => {
   const cartRepository = conf.DEFAULT_DATA_SOURCE.getRepository(Cart);
@@ -114,6 +127,27 @@ export const fetchCartPriceData = async (
   let discountAmount = 0;
   let deliveryCharge = 100;
   currCart.cartBookTopology.forEach((cbt) => cartPrice += cbt.book.price);
+  if (checkoutData.isInitialBlock ?? false) {
+    return {
+      cartPrice: cartPrice,
+      blockingAmount: cartPrice * BLOCKING_PERCENTAGE,
+      discountAmount: 0,
+      deliveryCharge: 0,
+      finalPrice: cartPrice * BLOCKING_PERCENTAGE,
+    };
+  }
+  if (checkoutData.isBlockComplete ?? false) {
+    if (cartPrice >= FREE_DELIVERY_PRICE_THRESHOLD) {
+      deliveryCharge = 0;
+    }
+    return {
+      cartPrice,
+      discountAmount: 0,
+      deliveryCharge,
+      amountPaidWhileBlocking: cartPrice * BLOCKING_PERCENTAGE,
+      finalPrice: cartPrice * (1 - BLOCKING_PERCENTAGE) + deliveryCharge,
+    }
+  }
   if (checkoutData.coupon !== undefined) {
     const currCoupon = await fetchCouponForName(checkoutData.coupon);
     if (currCoupon !== null && checkCouponValidity(currCoupon)) {
