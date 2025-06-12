@@ -22,7 +22,7 @@ export const fetchAllBooksFromDb = async (bookId: string | undefined) => {
       bookMedia: true,
     },
     order: {
-      updatedAt: "DESC",
+      createdAt: "DESC",
     },
   });
   return books;

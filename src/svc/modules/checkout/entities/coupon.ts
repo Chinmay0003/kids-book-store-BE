@@ -22,4 +22,7 @@ export class Coupon extends Metadata {
 
   @Column({ type: "bool", default: false })
   isActive!: boolean;
+
+  @OneToMany(() => Cart, (e) => e.coupon)
+  carts!: Cart[];
 }

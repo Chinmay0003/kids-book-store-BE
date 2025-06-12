@@ -3,18 +3,22 @@ import { conf } from "~src/config/settings";
 import { Book } from "~src/svc/modules/book/entities";
 import { In } from "typeorm";
 import { Cart } from "~src/svc/modules/cart/entities";
-import { fetchCartPriceData } from "~src/svc/modules/checkout/utils/utils";
+import { fetchCartPriceData, fetchCouponForName } from "~src/svc/modules/checkout/utils/utils";
+import { ICartStatusEnum } from "~src/svc/modules/cart/enums";
 
 export const processPaymentInitialisationForBook = async (
-  cartId: number,
-  address: number,
-  coupon?: string,
+  options: {
+    cartId: number;
+    addressId?: number;
+    coupon?: string;
+    isInitialBlock?: boolean;
+    isBlockComplete?: boolean;
+  }
 ) => {
   const cartRepository = conf.DEFAULT_DATA_SOURCE.getRepository(Cart);
-
   const requiredCart = await cartRepository.findOne({
     where: {
-      id: cartId,
+      id: options.cartId,
     },
     relations: {
       cartBookTopology: {
@@ -22,13 +26,15 @@ export const processPaymentInitialisationForBook = async (
       },
     },
   });
-  if (!requiredCart?.cartBookTopology.length) {
+  if (requiredCart === null || requiredCart.cartBookTopology.length === 0) {
     return;
   }
 
   const priceDetails = await fetchCartPriceData({
-    cartId,
-    coupon,
+    cartId: options.cartId,
+    coupon: options.coupon,
+    isInitialBlock: options.isInitialBlock,
+    isBlockComplete: options.isBlockComplete,
   });
 
   const razorpayClient = new RazorpayClient();
@@ -36,27 +42,86 @@ export const processPaymentInitialisationForBook = async (
 
   return {
     ...currentOrder,
-    shippingAddress: address,
+    shippingAddress: options.addressId,
     razorpayKeyId: conf.RAZORPAY_KEY_ID,
     items: requiredCart.cartBookTopology.map((cbt) => ({
       id: cbt.book.id,
       price: cbt.book.price,
       isSold: true,
     })),
+    ...(options.isInitialBlock && {
+      blockingPayment: true,
+    }),
+    ...(options.isBlockComplete && {
+      shippingPaymentForBlockedCart: true,
+    }),
   };
 };
 
-export const markBookAsSold = async (bookId: number) => {
-  const bookRepository = conf.DEFAULT_DATA_SOURCE.getRepository(Book);
-  const requiredBook = await bookRepository.findOne({
+export const processPaymentSuccessful = async (cartId: number, addressId: number, coupon?: string) => {
+  const cartRepo = conf.DEFAULT_DATA_SOURCE.getRepository(Cart);
+  const bookRepo = conf.DEFAULT_DATA_SOURCE.getRepository(Book);
+  const currCart = await cartRepo.findOne({
     where: {
-      id: bookId,
+      id: cartId,
+      cartBookTopology: {
+        book: {
+          isSold: false,
+        },
+      },
+    },
+    relations: {
+      cartBookTopology: {
+        book: true,
+      }
     },
   });
-  if (requiredBook === null) {
-    return;
+  if (currCart) {
+    const currCoupon = await fetchCouponForName(coupon ?? "");
+    await cartRepo.save({
+      ...currCart,
+      address: {
+        id: addressId,
+      },
+      ...(currCoupon !== null && {
+        coupon: {
+          id: currCoupon.id,
+        },
+      }),
+    });
+    const allBooks = currCart.cartBookTopology.map(e=>e.book);
+    await bookRepo.save(allBooks.map(e=> ({
+      ...e,
+      isSold: true,
+    })));
   }
-  await bookRepository.update(requiredBook.id, {
-    isSold: true,
+};
+
+export const markCartAsBlocked = async (cartId: number) => {
+  const cartRepo = conf.DEFAULT_DATA_SOURCE.getRepository(Cart);
+  await cartRepo.update(cartId, {
+    status: ICartStatusEnum.PAID_BLOCK,
   });
+};
+
+export const processPaymentSuccessfulForBlockedCart = async (cartId: number, addressId: number) => {
+  const cartRepo = conf.DEFAULT_DATA_SOURCE.getRepository(Cart);
+  const currCart = await cartRepo.findOne({
+    where: {
+      id: cartId,
+    },
+    relations: {
+      cartBookTopology: {
+        book: true,
+      }
+    },
+  });
+  if (currCart) {
+    await cartRepo.save({
+      ...currCart,
+      address: {
+        id: addressId,
+      },
+    });
+  }
 };
