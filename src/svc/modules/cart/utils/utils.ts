@@ -113,7 +113,7 @@ export const updateCartWithBooksInDb = async (userId: number, bookIds: number[],
   const cartRepo = conf.DEFAULT_DATA_SOURCE.getRepository(Cart);
   const bookRepo = conf.DEFAULT_DATA_SOURCE.getRepository(Book);
   const cartBookTopologyRepo = conf.DEFAULT_DATA_SOURCE.getRepository(CartBookTopology);
-  const currCart = await cartRepo.findOne({
+  let currCart = await cartRepo.findOne({
     where: {
       appUser: {
         id: userId,
@@ -121,6 +121,22 @@ export const updateCartWithBooksInDb = async (userId: number, bookIds: number[],
       status: cartType,
     },
   });
+  if (currCart === null) {
+    await cartRepo.save({
+      appUser: {
+        id: userId,
+      },
+      status: cartType,
+    });
+    currCart = await cartRepo.findOne({
+      where: {
+        appUser: {
+          id: userId,
+        },
+        status: cartType,
+      },
+    });
+  }
   if (currCart === null) {
     return;
   }
