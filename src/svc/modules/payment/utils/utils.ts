@@ -1,8 +1,8 @@
 import { RazorpayClient } from "~src/clients/razorpay";
 import { conf } from "~src/config/settings";
 import { Book } from "~src/svc/modules/book/entities";
-import { In } from "typeorm";
-import { Cart } from "~src/svc/modules/cart/entities";
+import { In, Not } from "typeorm";
+import { Cart, CartBookTopology } from "~src/svc/modules/cart/entities";
 import { fetchCartPriceData, fetchCouponForName } from "~src/svc/modules/checkout/utils/utils";
 import { ICartStatusEnum } from "~src/svc/modules/cart/enums";
 
@@ -99,9 +99,36 @@ export const processPaymentSuccessful = async (cartId: number, addressId: number
 
 export const markCartAsBlocked = async (cartId: number) => {
   const cartRepo = conf.DEFAULT_DATA_SOURCE.getRepository(Cart);
-  await cartRepo.update(cartId, {
-    status: ICartStatusEnum.PAID_BLOCK,
+  const cartBookTopologyRepo = conf.DEFAULT_DATA_SOURCE.getRepository(CartBookTopology);
+
+  const currCart = await cartRepo.findOne({
+    where: { id: cartId },
+    relations: { appUser: true, cartBookTopology: { book: true } },
   });
+  if (!currCart) return;
+
+  const otherPaidBlockCart = await cartRepo.findOne({
+    where: {
+      appUser: { id: currCart.appUser.id },
+      status: ICartStatusEnum.PAID_BLOCK,
+      id: Not(cartId),
+    },
+    relations: { cartBookTopology: { book: true } },
+  });
+
+  if (otherPaidBlockCart) {
+    const currBookIds = new Set(currCart.cartBookTopology.map(e => e.book.id));
+    const toMove = otherPaidBlockCart.cartBookTopology.filter(e => !currBookIds.has(e.book.id));
+
+    await cartBookTopologyRepo.save(
+      toMove.map((entry) => ({
+        ...entry,
+        cart: { id: currCart.id },
+      }))
+    );
+    await cartRepo.delete(otherPaidBlockCart.id);
+  }
+  await cartRepo.update(cartId, { status: ICartStatusEnum.PAID_BLOCK });
 };
 
 export const processPaymentSuccessfulForBlockedCart = async (cartId: number, addressId: number) => {
@@ -119,6 +146,7 @@ export const processPaymentSuccessfulForBlockedCart = async (cartId: number, add
   if (currCart) {
     await cartRepo.save({
       ...currCart,
+      status: ICartStatusEnum.BOUGHT,
       address: {
         id: addressId,
       },
