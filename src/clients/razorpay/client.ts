@@ -13,7 +13,7 @@ export class RazorpayClient {
 
   async createOrder(amount: number) {
     const order = await this.#client.orders.create({
-      amount: amount * 100,
+      amount: Math.round(amount * 100),
       currency: "INR",
       receipt: "receipt_order_123",
     });
