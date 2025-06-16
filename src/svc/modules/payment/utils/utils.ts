@@ -83,6 +83,7 @@ export const processPaymentSuccessful = async (cartId: number, addressId: number
       address: {
         id: addressId,
       },
+      status: ICartStatusEnum.BOUGHT,
       ...(currCoupon !== null && {
         coupon: {
           id: currCoupon.id,
