@@ -90,7 +90,7 @@ export const checkCouponValidity = (coupon: Coupon) => {
   if (coupon.validityCriteria.days !== undefined && !coupon.validityCriteria.days.includes(currDate.getDay())) {
     return false;
   }
-  if (coupon.validityCriteria.date !== undefined && !coupon.validityCriteria.date.includes(currDate.toISOString())) {
+  if (coupon.validityCriteria.date !== undefined && !coupon.validityCriteria.date.includes(currDate.toISOString().split("T")[0])) {
     return false;
   }
   return true;
