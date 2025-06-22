@@ -134,7 +134,8 @@ export const updateBookDataInDb = async (bookData: {
   }
 };
 
-export const sendBookToWhatsappUtil = async (bookId: number) => {
+export const sendBookToWhatsappUtil = async (bookId: number, sendWhatsappMsg: boolean) => {
   const bookRepo = conf.DEFAULT_DATA_SOURCE.getRepository(Book);
-  await bookRepo.update(bookId, { sendWhatsappMsg: true });
+  console.log(bookId, sendWhatsappMsg);
+  await bookRepo.update(bookId, { sendWhatsappMsg });
 };

@@ -32,4 +32,5 @@ export const UpdateBookDataSchema = z.object({
 
 export const SendBookToWhatsappSchema = z.object({
   bookId: z.number(),
+  sendWhatsappMsg: z.boolean(),
 });

@@ -120,7 +120,7 @@ export const sendBookToWhatsapp = async (
     });
     return;
   }
-  const {bookId} = data;
-  await sendBookToWhatsappUtil(bookId);
+  const {bookId, sendWhatsappMsg} = data;
+  await sendBookToWhatsappUtil(bookId, sendWhatsappMsg);
   res.status(200).json({ status: "OK" });
 };
