@@ -35,6 +35,7 @@ export const postNewBookDataToDB = async (bookData: {
   quality?: string;
   bookType?: string;
   contentCategory?: string;
+  sendWhatsappMsg?: boolean;
 }) => {
   const bookRepository = conf.DEFAULT_DATA_SOURCE.getRepository(Book);
   const savedBook = await bookRepository.save({
@@ -44,6 +45,7 @@ export const postNewBookDataToDB = async (bookData: {
     quality: bookData.quality as IBookQualityEnum,
     type: bookData.bookType as IBookTypeEnum,
     contentCategory: bookData.contentCategory as IBookContentCategoryEnum,
+    sendWhatsappMsg: bookData.sendWhatsappMsg,
   });
   return savedBook.id;
 };
@@ -95,6 +97,7 @@ export const updateBookDataInDb = async (bookData: {
   contentCategory?: string;
   mediaToDelete?: number[];
   isSold?: boolean;
+  sendWhatsappMsg?: boolean;
 }) => {
   const bookRepository = conf.DEFAULT_DATA_SOURCE.getRepository(Book);
   const bookMediaRepository = conf.DEFAULT_DATA_SOURCE.getRepository(BookMedia);
@@ -129,4 +132,9 @@ export const updateBookDataInDb = async (bookData: {
   if (bookData.mediaToDelete !== undefined && bookData.mediaToDelete.length > 0) {
     await bookMediaRepository.delete(bookData.mediaToDelete);
   }
+};
+
+export const sendBookToWhatsappUtil = async (bookId: number) => {
+  const bookRepo = conf.DEFAULT_DATA_SOURCE.getRepository(Book);
+  await bookRepo.update(bookId, { sendWhatsappMsg: true });
 };

@@ -11,6 +11,7 @@ export const PostNewBookSchema = z.object({
   quality: z.string().optional(),
   bookType: z.string().optional(),
   contentCategory: z.string().optional(),
+  sendWhatsappMsg: z.boolean().optional(),
 });
 
 export const PostNewBookMediaSchema = z.object({
@@ -27,4 +28,8 @@ export const UpdateBookDataSchema = z.object({
   contentCategory: z.string().optional(),
   mediaToDelete: z.array(z.number()).optional(),
   isSold: z.boolean().optional(),
+});
+
+export const SendBookToWhatsappSchema = z.object({
+  bookId: z.number(),
 });

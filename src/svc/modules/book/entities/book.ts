@@ -21,6 +21,10 @@ export class Book extends Metadata {
   @Column({ type: "bool", default: false })
   isSold!: boolean;
 
+  @Index()
+  @Column({ type: "bool", default: false })
+  sendWhatsappMsg!: boolean;
+
   @Column({ type: "integer" })
   price!: number;
 

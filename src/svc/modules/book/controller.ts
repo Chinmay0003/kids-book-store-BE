@@ -4,18 +4,21 @@ import {
   GetBookDataSchema,
   PostNewBookMediaSchema,
   PostNewBookSchema,
+  SendBookToWhatsappSchema,
   UpdateBookDataSchema,
 } from "~src/svc/modules/book/schemas";
 import {
   GetBookDataRequest,
   PostNewBookMediaRequest,
   PostNewBookRequest,
+  SendBookToWhatsappRequest,
   UpdateBookDataRequest,
 } from "~src/svc/modules/book/types";
 import {
   fetchAllBooksFromDb,
   postNewBookDataToDB,
   postNewBookMediaToS3,
+  sendBookToWhatsappUtil,
   updateBookDataInDb,
 } from "~src/svc/modules/book/utils/utils";
 
@@ -99,5 +102,25 @@ export const updateBookData = async (
     return;
   }
   await updateBookDataInDb(data);
+  res.status(200).json({ status: "OK" });
+};
+
+export const sendBookToWhatsapp = async (
+  req: Request,
+  res: Response,
+  _next: NextFunction,
+) => {
+  let data: SendBookToWhatsappRequest;
+  try {
+    data = SendBookToWhatsappSchema.parse(req.body);
+  } catch (e: unknown) {
+    res.status(400).json({
+      message: "Data validation failed",
+      errors: (e as Error).message,
+    });
+    return;
+  }
+  const {bookId} = data;
+  await sendBookToWhatsappUtil(bookId);
   res.status(200).json({ status: "OK" });
 };
