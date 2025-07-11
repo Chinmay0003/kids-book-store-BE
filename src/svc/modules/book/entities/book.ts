@@ -1,5 +1,6 @@
-import { Column, Entity, Index, OneToMany } from "typeorm";
+import { Column, Entity, Index, JoinColumn, OneToMany, OneToOne } from "typeorm";
 import { BookMedia } from "~src/svc/modules/book/entities/book-media";
+import { BookMetadata } from "~src/svc/modules/book/entities/book-metadata";
 import { IBookContentCategoryEnum, IBookEnum, IBookQualityEnum, IBookTypeEnum } from "~src/svc/modules/book/enum";
 import { IBookMetadata } from "~src/svc/modules/book/types";
 import { CartBookTopology } from "~src/svc/modules/cart/entities";
@@ -42,4 +43,10 @@ export class Book extends Metadata {
 
   @OneToMany(() => CartBookTopology, (e) => e.book)
   cartBookTopology!: CartBookTopology[];
+
+  @OneToOne("BookMetadata", (bookMetadata: BookMetadata) => bookMetadata.book, {
+    onDelete: "CASCADE",
+  })
+  @JoinColumn({ name: "bookMetadataId" })
+  bookMetadata!: BookMetadata;
 }

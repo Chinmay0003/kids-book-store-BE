@@ -8,7 +8,7 @@ import {
   IBookTypeEnum,
   MediaTypeEnum,
 } from "~src/svc/modules/book/enum";
-import { DeepPartial } from "typeorm";
+import { DeepPartial, IsNull, Not } from "typeorm";
 
 export const fetchAllBooksFromDb = async (bookId: string | undefined) => {
   const bookRepository = conf.DEFAULT_DATA_SOURCE.getRepository(Book);
@@ -138,4 +138,26 @@ export const sendBookToWhatsappUtil = async (bookId: number, sendWhatsappMsg: bo
   const bookRepo = conf.DEFAULT_DATA_SOURCE.getRepository(Book);
   console.log(bookId, sendWhatsappMsg);
   await bookRepo.update(bookId, { sendWhatsappMsg });
+};
+
+export const queryFilterBooksFromDb = async (query: string) => {
+  const booksRepo = conf.DEFAULT_DATA_SOURCE.getRepository(Book);
+  const allUnsoldBooks = await booksRepo.find({
+    where: {
+      isSold: false,
+      bookMetadata: Not(IsNull()),
+    },
+    relations: {
+      bookMetadata: true,
+    },
+  });
+  const bookDescriptionArr = [];
+  allUnsoldBooks.forEach((book, index) => {
+    bookDescriptionArr.push({
+      bookIndex: index + 1,
+      bookName: book.name,
+      bookDescription: book.bookMetadata.summary,
+    });
+  });
+  const formatGptQuery = `I have an array of books. `
 };

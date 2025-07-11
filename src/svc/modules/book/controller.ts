@@ -4,6 +4,7 @@ import {
   GetBookDataSchema,
   PostNewBookMediaSchema,
   PostNewBookSchema,
+  QueryFilterBooksSchema,
   SendBookToWhatsappSchema,
   UpdateBookDataSchema,
 } from "~src/svc/modules/book/schemas";
@@ -11,6 +12,7 @@ import {
   GetBookDataRequest,
   PostNewBookMediaRequest,
   PostNewBookRequest,
+  QueryFilterBooksRequest,
   SendBookToWhatsappRequest,
   UpdateBookDataRequest,
 } from "~src/svc/modules/book/types";
@@ -18,6 +20,7 @@ import {
   fetchAllBooksFromDb,
   postNewBookDataToDB,
   postNewBookMediaToS3,
+  queryFilterBooksFromDb,
   sendBookToWhatsappUtil,
   updateBookDataInDb,
 } from "~src/svc/modules/book/utils/utils";
@@ -123,4 +126,26 @@ export const sendBookToWhatsapp = async (
   const {bookId, sendWhatsappMsg} = data;
   await sendBookToWhatsappUtil(bookId, sendWhatsappMsg);
   res.status(200).json({ status: "OK" });
+};
+
+export const queryFilterBooks = async (
+  req: Request,
+  res: Response,
+  _next: NextFunction,
+) => {
+  let data: QueryFilterBooksRequest;
+  try {
+    data = QueryFilterBooksSchema.parse(req.body);
+  } catch (e: unknown) {
+    res.status(400).json({
+      message: "Data validation failed",
+      errors: (e as Error).message,
+    });
+    return;
+  }
+  const {query} = data;
+  const bookData = await queryFilterBooksFromDb(query);
+  res.status(200).json({
+    bookData,
+  });
 };

@@ -3,6 +3,7 @@ import {
   getAllBooks,
   postNewBookData,
   postNewBookMedia,
+  queryFilterBooks,
   sendBookToWhatsapp,
   updateBookData,
 } from "~src/svc/modules/book/controller";
@@ -14,3 +15,4 @@ bookRouter.post("/", postNewBookData);
 bookRouter.put("/", updateBookData);
 bookRouter.post("/media", postNewBookMedia);
 bookRouter.post("/send-whatsapp", sendBookToWhatsapp);
+bookRouter.post("/query-filter", queryFilterBooks);

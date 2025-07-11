@@ -3,6 +3,7 @@ import {
   GetBookDataSchema,
   PostNewBookMediaSchema,
   PostNewBookSchema,
+  QueryFilterBooksSchema,
   SendBookToWhatsappSchema,
   UpdateBookDataSchema,
 } from "~src/svc/modules/book/schemas";
@@ -16,6 +17,8 @@ export type PostNewBookMediaRequest = z.infer<typeof PostNewBookMediaSchema>;
 export type UpdateBookDataRequest = z.infer<typeof UpdateBookDataSchema>;
 
 export type SendBookToWhatsappRequest = z.infer<typeof SendBookToWhatsappSchema>;
+
+export type QueryFilterBooksRequest = z.infer<typeof QueryFilterBooksSchema>;
 
 export interface IBookMetadata {
   bookCondition?: string;
