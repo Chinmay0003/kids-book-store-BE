@@ -33,7 +33,7 @@ export const getAllBooks = async (req: Request, res: Response, _next: NextFuncti
     });
     return;
   }
-  const{bookId} = data;
+  const { bookId } = data;
   const bookData = await fetchAllBooksFromDb(bookId);
   res.status(200).json({
     bookData,
@@ -120,7 +120,7 @@ export const sendBookToWhatsapp = async (
     });
     return;
   }
-  const {bookId, sendWhatsappMsg} = data;
+  const { bookId, sendWhatsappMsg } = data;
   await sendBookToWhatsappUtil(bookId, sendWhatsappMsg);
   res.status(200).json({ status: "OK" });
 };

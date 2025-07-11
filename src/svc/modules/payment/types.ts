@@ -12,6 +12,10 @@ export type PostPaymentInitialisationRequest = z.infer<
 
 export type PostPaymentSuccessfulRequest = z.infer<typeof PostPaymentSuccessfulSchema>;
 
-export type PostPaymentSuccessfulForBlockedCartRequest = z.infer<typeof PostPaymentSuccessfulForBlockedCartSchema>;
+export type PostPaymentSuccessfulForBlockedCartRequest = z.infer<
+  typeof PostPaymentSuccessfulForBlockedCartSchema
+>;
 
-export type CartBlockedPaymentSuccessRequest = z.infer<typeof CartBlockedPaymentSuccessSchema>;
+export type CartBlockedPaymentSuccessRequest = z.infer<
+  typeof CartBlockedPaymentSuccessSchema
+>;

@@ -1,7 +1,15 @@
 import { NextFunction, Response } from "express";
 import { AuthRequest } from "~src/svc/modules/auth/middleware";
-import { DeleteAddressSchema, GetCartPriceSchema, PostAdddAddressToDbSchema } from "~src/svc/modules/checkout/schemas";
-import { DeleteAddressRequest, GetCartPriceRequest, PostAdddAddressToDbRequest } from "~src/svc/modules/checkout/types";
+import {
+  DeleteAddressSchema,
+  GetCartPriceSchema,
+  PostAdddAddressToDbSchema,
+} from "~src/svc/modules/checkout/schemas";
+import {
+  DeleteAddressRequest,
+  GetCartPriceRequest,
+  PostAdddAddressToDbRequest,
+} from "~src/svc/modules/checkout/types";
 import {
   addAddRessToDb,
   deleteAddressForId,
@@ -54,8 +62,8 @@ export const deleteAddress = async (
       errors: (e as Error).message,
     });
     return;
-  };
-  const {addressId} = data;
+  }
+  const { addressId } = data;
   const userId = req.user?.id ?? "-1";
   await deleteAddressForId(addressId);
   const response = await fetchAllAddressesForUser(parseInt(userId));
@@ -76,7 +84,7 @@ export const fetchCartPrice = async (
       errors: (e as Error).message,
     });
     return;
-  };
+  }
   const priceData = await fetchCartPriceData(data);
   res.status(200).json(priceData);
 };

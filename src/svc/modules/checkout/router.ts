@@ -1,7 +1,12 @@
 import express, { RequestHandler } from "express";
 import { authenticateJWT } from "~src/svc/modules/auth/middleware";
 import { getActiveCart } from "~src/svc/modules/cart/controller";
-import { addAddress, deleteAddress, fetchCartPrice, getAllAddresses } from "~src/svc/modules/checkout/controller";
+import {
+  addAddress,
+  deleteAddress,
+  fetchCartPrice,
+  getAllAddresses,
+} from "~src/svc/modules/checkout/controller";
 
 export const checkoutRouter = express.Router();
 

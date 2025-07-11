@@ -1,7 +1,13 @@
-import { Column, Entity, Index, OneToMany } from "typeorm";
+import { Column, Entity, Index, OneToMany, OneToOne } from "typeorm";
 import { BookMedia } from "~src/svc/modules/book/entities/book-media";
-import { IBookContentCategoryEnum, IBookEnum, IBookQualityEnum, IBookTypeEnum } from "~src/svc/modules/book/enum";
+import {
+  IBookContentCategoryEnum,
+  IBookEnum,
+  IBookQualityEnum,
+  IBookTypeEnum,
+} from "~src/svc/modules/book/enum";
 import { IBookMetadata } from "~src/svc/modules/book/types";
+import { BusinessBookTopology } from "~src/svc/modules/business/entities/business-book-topology";
 import { CartBookTopology } from "~src/svc/modules/cart/entities";
 import { Metadata } from "~src/svc/modules/common/entities";
 
@@ -42,4 +48,7 @@ export class Book extends Metadata {
 
   @OneToMany(() => CartBookTopology, (e) => e.book)
   cartBookTopology!: CartBookTopology[];
+
+  @OneToOne(() => BusinessBookTopology, (e) => e.book)
+  businessBookTopology!: BusinessBookTopology;
 }
