@@ -43,6 +43,9 @@ export class Book extends Metadata {
   @Column({ type: "enum", enum: IBookContentCategoryEnum, nullable: true })
   contentCategory!: IBookContentCategoryEnum;
 
+  @Column({ type: "bool", default: false })
+  isBusinessBook!: boolean;
+
   @OneToMany(() => BookMedia, (e) => e.book)
   bookMedia!: BookMedia[];
 

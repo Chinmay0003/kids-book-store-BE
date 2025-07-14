@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToOne, JoinColumn, OneToOne, Index } from "typeorm";
+import { Column, Entity, ManyToOne, JoinColumn, Index, OneToOne } from "typeorm";
 import { Metadata } from "~src/svc/modules/common/entities";
 import { Book } from "~src/svc/modules/book/entities";
 import { Business } from "~src/svc/modules/business/entities/business";
@@ -11,14 +11,14 @@ export class BusinessBookTopology extends Metadata {
   @Column({ type: "boolean", default: false })
   isPaymentRecieved!: boolean;
 
-  @ManyToOne("Book", (e: Book) => e.businessBookTopology, {
+  @OneToOne("Book", (e: Book) => e.businessBookTopology, {
     onDelete: "CASCADE",
   })
   @JoinColumn({ name: "bookId" })
   book!: Book;
 
   @Index()
-  @OneToOne("Business", (e: Business) => e.businessBookTopology, {
+  @ManyToOne("Business", (e: Business) => e.businessBookTopology, {
     onDelete: "CASCADE",
   })
   @JoinColumn({ name: "businessId" })

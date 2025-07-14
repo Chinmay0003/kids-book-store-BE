@@ -33,8 +33,8 @@ export const getAllBooks = async (req: Request, res: Response, _next: NextFuncti
     });
     return;
   }
-  const { bookId } = data;
-  const bookData = await fetchAllBooksFromDb(bookId);
+  const { bookId, isBusinessBook } = data;
+  const bookData = await fetchAllBooksFromDb(bookId, isBusinessBook ?? false);
   res.status(200).json({
     bookData,
   });

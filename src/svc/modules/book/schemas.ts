@@ -2,6 +2,7 @@ import { z } from "zod";
 
 export const GetBookDataSchema = z.object({
   bookId: z.string().optional(),
+  isBusinessBook: z.boolean().optional(),
 });
 
 export const PostNewBookSchema = z.object({
@@ -12,6 +13,7 @@ export const PostNewBookSchema = z.object({
   bookType: z.string().optional(),
   contentCategory: z.string().optional(),
   sendWhatsappMsg: z.boolean().optional(),
+  isBusinessBook: z.boolean().optional(),
 });
 
 export const PostNewBookMediaSchema = z.object({
@@ -28,6 +30,7 @@ export const UpdateBookDataSchema = z.object({
   contentCategory: z.string().optional(),
   mediaToDelete: z.array(z.number()).optional(),
   isSold: z.boolean().optional(),
+  isBusinessBook: z.boolean().optional(),
 });
 
 export const SendBookToWhatsappSchema = z.object({

@@ -5,6 +5,7 @@ import { paymentRouter } from "~src/svc/modules/payment";
 import { authRouter } from "~src/svc/modules/auth/router";
 import { cartRouter } from "~src/svc/modules/cart";
 import { checkoutRouter } from "~src/svc/modules/checkout";
+import { businessRouter } from "~src/svc/modules/business";
 
 export const router = express.Router();
 
@@ -14,3 +15,4 @@ router.use("/payment", paymentRouter);
 router.use("/auth", authRouter);
 router.use("/cart", cartRouter);
 router.use("/checkout", checkoutRouter);
+router.use("/business", businessRouter);

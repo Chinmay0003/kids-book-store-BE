@@ -10,14 +10,15 @@ import {
 } from "~src/svc/modules/book/enum";
 import { DeepPartial } from "typeorm";
 
-export const fetchAllBooksFromDb = async (bookId: string | undefined) => {
+export const fetchAllBooksFromDb = async (bookId: string | undefined, isBusinessBook: boolean) => {
   const bookRepository = conf.DEFAULT_DATA_SOURCE.getRepository(Book);
   const books = await bookRepository.find({
-    ...(bookId && {
-      where: {
+    where: {
+      isBusinessBook,
+      ...(bookId && {
         id: parseInt(bookId),
-      },
-    }),
+      }),
+    },
     relations: {
       bookMedia: true,
     },
@@ -36,6 +37,7 @@ export const postNewBookDataToDB = async (bookData: {
   bookType?: string;
   contentCategory?: string;
   sendWhatsappMsg?: boolean;
+  isBusinessBook?: boolean;
 }) => {
   const bookRepository = conf.DEFAULT_DATA_SOURCE.getRepository(Book);
   const savedBook = await bookRepository.save({
@@ -46,6 +48,7 @@ export const postNewBookDataToDB = async (bookData: {
     type: bookData.bookType as IBookTypeEnum,
     contentCategory: bookData.contentCategory as IBookContentCategoryEnum,
     sendWhatsappMsg: bookData.sendWhatsappMsg,
+    isBusinessBook: bookData.isBusinessBook,
   });
   return savedBook.id;
 };
@@ -98,6 +101,7 @@ export const updateBookDataInDb = async (bookData: {
   mediaToDelete?: number[];
   isSold?: boolean;
   sendWhatsappMsg?: boolean;
+  isBusinessBook?: boolean;
 }) => {
   const bookRepository = conf.DEFAULT_DATA_SOURCE.getRepository(Book);
   const bookMediaRepository = conf.DEFAULT_DATA_SOURCE.getRepository(BookMedia);
@@ -127,6 +131,9 @@ export const updateBookDataInDb = async (bookData: {
     }),
     ...(bookData.isSold !== undefined && {
       isSold: bookData.isSold,
+    }),
+    ...(bookData.isBusinessBook !== undefined && {
+      isBusinessBook: bookData.isBusinessBook,
     }),
   });
   if (bookData.mediaToDelete !== undefined && bookData.mediaToDelete.length > 0) {

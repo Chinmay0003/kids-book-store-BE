@@ -24,3 +24,13 @@ export const UpdateBusinessSchema = z.object({
 export const DeleteBusinessSchema = z.object({
   businessId: z.number(),
 });
+
+export const GetBusinessTopologySchema = z.object({
+  businessId: z.number(),
+});
+
+export const PostBusinessTopologySchema = z.object({
+  businessId: z.number(),
+  bookId: z.number(),
+  cut: z.number(),
+});
