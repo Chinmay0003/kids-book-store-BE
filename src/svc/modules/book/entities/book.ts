@@ -1,8 +1,14 @@
-import { Column, Entity, Index, JoinColumn, OneToMany, OneToOne } from "typeorm";
+import { Column, Entity, Index, JoinColumn, OneToMany, OneToOne, OneToOne } from "typeorm";
 import { BookMedia } from "~src/svc/modules/book/entities/book-media";
 import { BookMetadata } from "~src/svc/modules/book/entities/book-metadata";
-import { IBookContentCategoryEnum, IBookEnum, IBookQualityEnum, IBookTypeEnum } from "~src/svc/modules/book/enum";
+import {
+  IBookContentCategoryEnum,
+  IBookEnum,
+  IBookQualityEnum,
+  IBookTypeEnum,
+} from "~src/svc/modules/book/enum";
 import { IBookMetadata } from "~src/svc/modules/book/types";
+import { BusinessBookTopology } from "~src/svc/modules/business/entities/business-book-topology";
 import { CartBookTopology } from "~src/svc/modules/cart/entities";
 import { Metadata } from "~src/svc/modules/common/entities";
 
@@ -38,11 +44,17 @@ export class Book extends Metadata {
   @Column({ type: "enum", enum: IBookContentCategoryEnum, nullable: true })
   contentCategory!: IBookContentCategoryEnum;
 
+  @Column({ type: "bool", default: false })
+  isBusinessBook!: boolean;
+
   @OneToMany(() => BookMedia, (e) => e.book)
   bookMedia!: BookMedia[];
 
   @OneToMany(() => CartBookTopology, (e) => e.book)
   cartBookTopology!: CartBookTopology[];
+
+  @OneToOne(() => BusinessBookTopology, (e) => e.book)
+  businessBookTopology!: BusinessBookTopology;
 
   @OneToOne("BookMetadata", (bookMetadata: BookMetadata) => bookMetadata.book, {
     onDelete: "CASCADE",

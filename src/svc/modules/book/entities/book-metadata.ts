@@ -8,6 +8,9 @@ export class BookMetadata extends Metadata {
   @Column({ type: "text" })
   summary!: string;
 
+  @Column({ type: "jsonb", nullable: true })
+  defaultKeywords!: string[] | null;
+
   @OneToOne(
     () => Book,
     (book: Book) => book.bookMetadata,

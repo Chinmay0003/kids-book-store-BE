@@ -79,7 +79,7 @@ export const cartBlockedPaymentSuccess = async (
     });
     return;
   }
-  const {cartId} = data;
+  const { cartId } = data;
   await markCartAsBlocked(cartId);
   res.status(200).json({ status: "OK" });
 };

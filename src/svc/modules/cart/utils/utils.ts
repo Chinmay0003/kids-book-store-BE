@@ -22,7 +22,7 @@ export const getCurrentActiveCartForUser = async (userId: number) => {
       },
     },
   });
-  let currCart = currCarts.find(e=>e.status === ICartStatusEnum.ACTIVE) ?? null;
+  let currCart = currCarts.find((e) => e.status === ICartStatusEnum.ACTIVE) ?? null;
   if (currCart === null) {
     await cartRepo.save({
       appUser: {
@@ -47,9 +47,9 @@ export const getCurrentActiveCartForUser = async (userId: number) => {
     });
   }
   if (currCart) {
-    const soldBooks = currCart.cartBookTopology.filter(e=>e.book.isSold === true);
+    const soldBooks = currCart.cartBookTopology.filter((e) => e.book.isSold === true);
     if (soldBooks.length > 0) {
-      await cartBookTopologyRepo.delete(soldBooks.map(e=>e.id));
+      await cartBookTopologyRepo.delete(soldBooks.map((e) => e.id));
       currCart = await cartRepo.findOne({
         where: {
           id: currCart.id,
@@ -65,8 +65,12 @@ export const getCurrentActiveCartForUser = async (userId: number) => {
       });
     }
   }
-  const unpaidBlockedCart = currCarts.find(e=>e.status === ICartStatusEnum.UNPAID_BLOCK);
-  const paidBlockedCart = currCarts.find(e=>e.status === ICartStatusEnum.PAID_BLOCK);
+  const unpaidBlockedCart = currCarts.find(
+    (e) => e.status === ICartStatusEnum.UNPAID_BLOCK,
+  );
+  const paidBlockedCart = currCarts.find(
+    (e) => e.status === ICartStatusEnum.PAID_BLOCK,
+  );
   return {
     ...currCart,
     unpaidBlockedCart,
@@ -74,7 +78,11 @@ export const getCurrentActiveCartForUser = async (userId: number) => {
   };
 };
 
-export const addBookToCartForUser = async (userId: number, bookId: number, cartStatus = ICartStatusEnum.ACTIVE) => {
+export const addBookToCartForUser = async (
+  userId: number,
+  bookId: number,
+  cartStatus = ICartStatusEnum.ACTIVE,
+) => {
   const cartRepo = conf.DEFAULT_DATA_SOURCE.getRepository(Cart);
   const cartBookTopologyRepo = conf.DEFAULT_DATA_SOURCE.getRepository(CartBookTopology);
   let currCart = await cartRepo.findOne({
@@ -109,7 +117,11 @@ export const addBookToCartForUser = async (userId: number, bookId: number, cartS
   }
 };
 
-export const updateCartWithBooksInDb = async (userId: number, bookIds: number[], cartType = ICartStatusEnum.ACTIVE) => {
+export const updateCartWithBooksInDb = async (
+  userId: number,
+  bookIds: number[],
+  cartType = ICartStatusEnum.ACTIVE,
+) => {
   const cartRepo = conf.DEFAULT_DATA_SOURCE.getRepository(Cart);
   const bookRepo = conf.DEFAULT_DATA_SOURCE.getRepository(Book);
   const cartBookTopologyRepo = conf.DEFAULT_DATA_SOURCE.getRepository(CartBookTopology);
@@ -148,14 +160,16 @@ export const updateCartWithBooksInDb = async (userId: number, bookIds: number[],
     },
     relations: {
       book: true,
-    }
+    },
   });
   if (currTopologies.length > 0) {
     if (cartType === ICartStatusEnum.UNPAID_BLOCK) {
-      await bookRepo.save(currTopologies.map(e=> ({
-        ...e.book,
-        isSold: false,
-      })));
+      await bookRepo.save(
+        currTopologies.map((e) => ({
+          ...e.book,
+          isSold: false,
+        })),
+      );
     }
     await cartBookTopologyRepo.delete(currTopologies.map((e) => e.id));
   }
@@ -175,9 +189,11 @@ export const updateCartWithBooksInDb = async (userId: number, bookIds: number[],
         id: In(bookIds),
       },
     });
-    await bookRepo.save(updatedBooks.map(e=>({
-      ...e,
-      isSold: true,
-    })));
+    await bookRepo.save(
+      updatedBooks.map((e) => ({
+        ...e,
+        isSold: true,
+      })),
+    );
   }
 };
