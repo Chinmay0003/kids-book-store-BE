@@ -1,6 +1,6 @@
 import { DataSource, DataSourceOptions } from "typeorm";
 import { AppUser } from "~src/svc/modules/auth/entities/user";
-import { Book, BookMedia } from "~src/svc/modules/book/entities";
+import { Book, BookMedia, BookMetadata } from "~src/svc/modules/book/entities";
 import { Cart, CartBookTopology } from "~src/svc/modules/cart/entities";
 import { Address, Coupon } from "~src/svc/modules/checkout/entities";
 import { Business, BusinessBookTopology } from "~src/svc/modules/business";
@@ -27,8 +27,9 @@ const config: DataSourceOptions = {
     Coupon,
     Business,
     BusinessBookTopology,
+    BookMetadata,
   ],
-  migrations: ["src/svc/migrations/*.{ts,js}"],
+  migrations: ["dist/src/svc/migrations/*.{ts,js}"],
   migrationsTableName: "migrations_typeorm",
   migrationsRun: false,
 };

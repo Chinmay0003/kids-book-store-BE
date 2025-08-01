@@ -68,7 +68,7 @@ export const fetchAllBusinessTopologyFromDb = async (businessId: number) => {
     relations: {
       book: true,
       business: true,
-    }
+    },
   });
 };
 

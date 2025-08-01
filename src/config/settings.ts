@@ -15,4 +15,5 @@ export const conf: Config = {
   DEFAULT_DATA_SOURCE: dataSource,
   RAZORPAY_KEY_ID: process.env.RAZORPAY_KEY_ID!,
   RAZORPAY_KEY_SECRET: process.env.RAZORPAY_KEY_SECRET!,
+  OPENAI_API_KEY: process.env.OPENAI_API_KEY!,
 };

@@ -8,9 +8,13 @@ import {
   IBookTypeEnum,
   MediaTypeEnum,
 } from "~src/svc/modules/book/enum";
-import { DeepPartial } from "typeorm";
+import { DeepPartial, IsNull, Not } from "typeorm";
+import { getFilteredBooksFromAi } from "~src/svc/modules/book/utils/ai";
 
-export const fetchAllBooksFromDb = async (bookId: string | undefined, isBusinessBook: boolean) => {
+export const fetchAllBooksFromDb = async (
+  bookId: string | undefined,
+  isBusinessBook: boolean,
+) => {
   const bookRepository = conf.DEFAULT_DATA_SOURCE.getRepository(Book);
   const books = await bookRepository.find({
     where: {
@@ -21,6 +25,7 @@ export const fetchAllBooksFromDb = async (bookId: string | undefined, isBusiness
     },
     relations: {
       bookMedia: true,
+      bookMetadata: true,
     },
     order: {
       createdAt: "DESC",
@@ -148,4 +153,65 @@ export const sendBookToWhatsappUtil = async (
   const bookRepo = conf.DEFAULT_DATA_SOURCE.getRepository(Book);
   console.log(bookId, sendWhatsappMsg);
   await bookRepo.update(bookId, { sendWhatsappMsg });
+};
+
+export const queryFilterBooksFromDb = async (query: string) => {
+  const booksRepo = conf.DEFAULT_DATA_SOURCE.getRepository(Book);
+  const allUnsoldBooks = await booksRepo.find({
+    where: {
+      isSold: false,
+      bookMetadata: Not(IsNull()),
+    },
+    relations: {
+      bookMetadata: true,
+      bookMedia: true,
+    },
+  });
+  const bookDescriptionArr: {
+    bookIndex: number;
+    bookName: string;
+    bookAgeGroup: string;
+    bookCategory: string;
+    bookDescription: string;
+  }[] = [];
+  allUnsoldBooks.forEach((book, index) => {
+    bookDescriptionArr.push({
+      bookIndex: index + 1,
+      bookName: book.name,
+      bookAgeGroup: book.category,
+      bookCategory: book.contentCategory,
+      bookDescription: book.bookMetadata.summary,
+    });
+  });
+  const chunkSize = 100;
+  const chunks: {
+    bookIndex: number;
+    bookName: string;
+    bookAgeGroup: string;
+    bookCategory: string;
+    bookDescription: string;
+  }[][] = [];
+
+  for (let i = 0; i < bookDescriptionArr.length; i += chunkSize) {
+    chunks.push(bookDescriptionArr.slice(i, i + chunkSize));
+  }
+
+  const allFilteredIndexes: number[] = [];
+
+  for (const chunk of chunks) {
+    try {
+      const result = await getFilteredBooksFromAi(query, chunk);
+      const parsed = JSON.parse(result ?? "[]") as number[];
+
+
+      parsed.forEach((i) => {
+        if (!allFilteredIndexes.includes(i)) {
+          allFilteredIndexes.push(i);
+        }
+      });
+    } catch (err) {
+      console.error("AI filter chunk failed:", err);
+    }
+  }
+  return allFilteredIndexes.map((bookIndex) => allUnsoldBooks[bookIndex - 1]).sort((a, b) => b.id - a.id);
 };

@@ -37,3 +37,7 @@ export const SendBookToWhatsappSchema = z.object({
   bookId: z.number(),
   sendWhatsappMsg: z.boolean(),
 });
+
+export const QueryFilterBooksSchema = z.object({
+  query: z.string(),
+});

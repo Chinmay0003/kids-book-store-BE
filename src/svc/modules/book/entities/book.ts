@@ -1,5 +1,6 @@
-import { Column, Entity, Index, OneToMany, OneToOne } from "typeorm";
+import { Column, Entity, Index, JoinColumn, OneToMany, OneToOne } from "typeorm";
 import { BookMedia } from "~src/svc/modules/book/entities/book-media";
+import { BookMetadata } from "~src/svc/modules/book/entities/book-metadata";
 import {
   IBookContentCategoryEnum,
   IBookEnum,
@@ -54,4 +55,10 @@ export class Book extends Metadata {
 
   @OneToOne(() => BusinessBookTopology, (e) => e.book)
   businessBookTopology!: BusinessBookTopology;
+
+  @OneToOne("BookMetadata", (bookMetadata: BookMetadata) => bookMetadata.book, {
+    onDelete: "CASCADE",
+  })
+  @JoinColumn({ name: "bookMetadataId" })
+  bookMetadata!: BookMetadata;
 }
