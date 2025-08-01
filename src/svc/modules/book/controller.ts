@@ -143,7 +143,7 @@ export const queryFilterBooks = async (
     });
     return;
   }
-  const {query} = data;
+  const { query } = data;
   const bookData = await queryFilterBooksFromDb(query);
   res.status(200).json({
     bookData,

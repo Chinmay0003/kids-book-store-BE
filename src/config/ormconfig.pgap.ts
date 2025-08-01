@@ -29,7 +29,7 @@ const config: DataSourceOptions = {
     BusinessBookTopology,
     BookMetadata,
   ],
-  migrations: ["src/svc/migrations/*.{ts,js}"],
+  migrations: ["dist/src/svc/migrations/*.{ts,js}"],
   migrationsTableName: "migrations_typeorm",
   migrationsRun: false,
 };

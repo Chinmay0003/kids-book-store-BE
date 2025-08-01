@@ -1,4 +1,4 @@
-import { Column, Entity, Index, JoinColumn, OneToMany, OneToOne, OneToOne } from "typeorm";
+import { Column, Entity, Index, JoinColumn, OneToMany, OneToOne } from "typeorm";
 import { BookMedia } from "~src/svc/modules/book/entities/book-media";
 import { BookMetadata } from "~src/svc/modules/book/entities/book-metadata";
 import {
